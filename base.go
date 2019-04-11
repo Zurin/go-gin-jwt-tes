@@ -54,7 +54,13 @@ func loginHandler(c *gin.Context) {
 			})
 			c.Abort()
 		} else {
-			sign := jwt.New(jwt.GetSigningMethod("HS256"))
+			claims := &jwt.StandardClaims{
+				ExpiresAt: 15000,
+				Issuer:    "zurin",
+			}
+
+			// sign := jwt.New(jwt.GetSigningMethod("HS256"))
+			sign := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 			token, err := sign.SignedString([]byte("secret"))
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{
